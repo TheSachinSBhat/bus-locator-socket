@@ -1,6 +1,13 @@
 <html>
   <body>
     <p id='server-time'></p>
+    <div>
+        <label>User Location</label>
+        <div id="user-location-div">
+            <div id="startLat"></div>
+            <div id="startLon"></div>
+      </div>
+    </div>
     <script src="/socket.io/socket.io.js"></script>
     <script>
       var socket = io();
@@ -9,6 +16,57 @@
       socket.on('time', function(timeString) {
         el.innerHTML = 'Server time: ' + timeString;
       });
+
+      /* Method that returns location co-ordinates of the user */
+      function getUserLocation() {
+          options = {
+              enableHighAccuracy: true,
+              timeout: 5000,
+              maximumAge: 0
+          };
+
+
+          // Reference: https://developer.mozilla.org/en-US/docs/Web/API/Geolocation/watchPosition
+          id = navigator.geolocation.watchPosition(sendBusLocation, error, options);
+      }
+
+      function error(err) {
+          console.warn('ERROR(' + err.code + '): ' + err.message);
+      }
+
+
+      /* Method that sends the bus current location to server */
+      function sendBusLocation(pos) {
+          socket.emit('buslocation', pos);
+      }
+
+      socket.on('buslocation', function (buslocation) {
+          updateUserLocation(buslocation);
+      });
+
+      /* Method that updates the user's current location */
+      function updateUserLocation(pos) {
+          document.getElementById('startLat').innerHTML = pos.coords.latitude;
+          document.getElementById('startLon').innerHTML = pos.coords.longitude;
+
+          //// TODO: Update user location on map
+          //busLocation = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
+          //busMarker.setPosition(busLocation);
+
+          //var currCenter = map.getCenter();
+          //google.maps.event.trigger(map, 'resize');
+          //// Re-center map to the current bus location
+          //map.setCenter(busLocation);
+
+          //// Get the path of the bus from the polyline
+          //var busPath = busRoutePolyline.getPath();
+
+          //// Because path is an MVCArray, we can simply append a new coordinate
+          //// and it will automatically appear.
+          //// Append the current bus location to the bus path
+          //busPath.push(busLocation);
+
+      }
     </script>
   </body>
 </html>
