@@ -17,6 +17,9 @@
         el.innerHTML = 'Server time: ' + timeString;
       });
 
+      // Get User location on page load
+      getUserLocation();
+
       /* Method that returns location co-ordinates of the user */
       function getUserLocation() {
           options = {
