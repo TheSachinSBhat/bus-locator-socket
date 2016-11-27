@@ -9,6 +9,8 @@
       </div>
     </div>
     <script src="/socket.io/socket.io.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDA5w4IA_fIDe8Iex8ybjYf8N7a2hMNkGA"></script>
     <script>
       var socket = io();
       var el = document.getElementById('server-time');
@@ -40,17 +42,18 @@
 
       /* Method that sends the bus current location to server */
       function sendBusLocation(pos) {
-          socket.emit('buslocation', pos);
+          var busLocation = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
+          socket.emit('buslocation', busLocation);
       }
 
-      socket.on('buslocation', function (buslocation) {
-          updateUserLocation(buslocation);
+      socket.on('buslocation', function (busLocationData) {
+          updateUserLocation(busLocationData);
       });
 
       /* Method that updates the user's current location */
       function updateUserLocation(pos) {
-          document.getElementById('startLat').innerHTML = pos.coords.latitude;
-          document.getElementById('startLon').innerHTML = pos.coords.longitude;
+          document.getElementById('startLat').innerHTML = pos.lat;
+          document.getElementById('startLon').innerHTML = pos.lng;
 
           //// TODO: Update user location on map
           //busLocation = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
