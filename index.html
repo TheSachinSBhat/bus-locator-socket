@@ -101,8 +101,8 @@
 
         /* Method that updates the user's current location */
         function updateUserLocation(busLocation) {
-            document.getElementById('startLat').innerHTML = pos.lat;
-            document.getElementById('startLon').innerHTML = pos.lng;
+            document.getElementById('startLat').innerHTML = busLocation.lat;
+            document.getElementById('startLon').innerHTML = busLocation.lng;
 
             //// TODO: Update user location on map
             //busLocation = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
