@@ -14,34 +14,34 @@ const server = express()
 
 const io = socketIO(server);
 
-var app = express();
-
 //var app = express();
-//var http = require('http').Server(app);
-//var server = app.listen(process.env.PORT);
-//var io = require('socket.io').listen(server);
 
-app.set('port', (process.env.PORT));
+////var app = express();
+////var http = require('http').Server(app);
+////var server = app.listen(process.env.PORT);
+////var io = require('socket.io').listen(server);
+
+//app.set('port', (process.env.PORT));
+
+////app.use(express.static(__dirname + '/public'));
 
 //app.use(express.static(__dirname + '/public'));
 
-app.use(express.static(__dirname + '/public'));
+//// views is directory for all template files
+//app.set('views', __dirname + '/views');
+//app.set('view engine', 'ejs');
 
-// views is directory for all template files
-app.set('views', __dirname + '/views');
-app.set('view engine', 'ejs');
+//app.get('/', function (request, response) {
+//    response.render('pages/index');
+//});
 
-app.get('/', function (request, response) {
-    response.render('pages/index');
-});
+//app.get('/transmitter', function (request, response) {
+//    response.render('pages/transmitter');
+//});
 
-app.get('/transmitter', function (request, response) {
-    response.render('pages/transmitter');
-});
-
-app.listen(app.get('port'), function () {
-    console.log('Node app is running on port', app.get('port'));
-});
+//app.listen(app.get('port'), function () {
+//    console.log('Node app is running on port', app.get('port'));
+//});
 
 io.on('connection', (socket) => {
   console.log('Client connected');
