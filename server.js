@@ -16,9 +16,10 @@ const INDEX = path.join(__dirname, 'index.html');
 
 var app = express();
 var http = require('http').Server(app);
-const io = socketIO(http);
+var server = app.listen(PORT);
+var io = require('socket.io').listen(server);
 
-app.set('port', (process.env.PORT || 5000));
+//app.set('port', (process.env.PORT || 5000));
 
 //app.use(express.static(__dirname + '/public'));
 
