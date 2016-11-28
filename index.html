@@ -67,35 +67,35 @@
             });
             busRoutePolyline.setMap(map);
 
-            /* Monitor User Location */
-            getUserLocation();
+            ///* Monitor User Location */
+            //getUserLocation();
         }
 
         /* Event listener for Window Load event */
         google.maps.event.addDomListener(window, 'load', initialize);
 
-        /* Method that returns location co-ordinates of the user */
-        function getUserLocation() {
-            options = {
-                enableHighAccuracy: true,
-                timeout: 5000,
-                maximumAge: 0
-            };
+        ///* Method that returns location co-ordinates of the user */
+        //function getUserLocation() {
+        //    options = {
+        //        enableHighAccuracy: true,
+        //        timeout: 5000,
+        //        maximumAge: 0
+        //    };
 
-            // Reference: https://developer.mozilla.org/en-US/docs/Web/API/Geolocation/watchPosition
-            id = navigator.geolocation.watchPosition(sendBusLocation, error, options);
-        }
+        //    // Reference: https://developer.mozilla.org/en-US/docs/Web/API/Geolocation/watchPosition
+        //    id = navigator.geolocation.watchPosition(sendBusLocation, error, options);
+        //}
 
-        function error(err) {
-            console.warn('ERROR(' + err.code + '): ' + err.message);
-        }
+        //function error(err) {
+        //    console.warn('ERROR(' + err.code + '): ' + err.message);
+        //}
 
 
-        /* Method that sends the bus current location to server */
-        function sendBusLocation(pos) {
-            var busLocation = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
-            socket.emit('buslocation', busLocation);
-        }
+        ///* Method that sends the bus current location to server */
+        //function sendBusLocation(pos) {
+        //    var busLocation = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
+        //    socket.emit('buslocation', busLocation);
+        //}
 
         socket.on('buslocation', function (busLocationData) {
             updateUserLocation(busLocationData);
