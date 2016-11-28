@@ -21,7 +21,7 @@ var app = express();
 //var server = app.listen(process.env.PORT);
 //var io = require('socket.io').listen(server);
 
-app.set('port', (process.env.PORT || 5000));
+app.set('port', (process.env.PORT));
 
 //app.use(express.static(__dirname + '/public'));
 
