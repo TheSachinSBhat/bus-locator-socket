@@ -8,16 +8,18 @@ const path = require('path');
 const PORT = process.env.PORT || 3000;
 const INDEX = path.join(__dirname, 'index.html');
 
-//const server = express()
-//  .use((req, res) => res.sendFile(INDEX) )
-//  .listen(PORT, () => console.log(`Listening on ${ PORT }`));
+const server = express()
+  .use((req, res) => res.sendFile(INDEX) )
+  .listen(PORT, () => console.log(`Listening on ${ PORT }`));
 
-//const io = socketIO(server);
+const io = socketIO(server);
 
 var app = express();
-var http = require('http').Server(app);
-var server = app.listen(process.env.PORT);
-var io = require('socket.io').listen(server);
+
+//var app = express();
+//var http = require('http').Server(app);
+//var server = app.listen(process.env.PORT);
+//var io = require('socket.io').listen(server);
 
 app.set('port', (process.env.PORT || 5000));
 
