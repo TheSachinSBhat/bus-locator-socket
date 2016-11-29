@@ -1,0 +1,45 @@
+<html>
+<head>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" />
+    <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDA5w4IA_fIDe8Iex8ybjYf8N7a2hMNkGA"></script>
+</head>
+<body>
+    <script>
+          var socket = io.connect();
+
+          socket.on('message', function (data) {
+              console.log(data.message);
+          });
+
+          /* Monitor User Location */
+          getUserLocation();
+
+          /* Method that returns location co-ordinates of the user */
+          function getUserLocation() {
+              options = {
+                  enableHighAccuracy: true,
+                  timeout: 5000,
+                  maximumAge: 0
+              };
+
+              // Reference: https://developer.mozilla.org/en-US/docs/Web/API/Geolocation/watchPosition
+              id = navigator.geolocation.watchPosition(sendBusLocation, error, options);
+          }
+
+          function error(err) {
+              console.warn('ERROR(' + err.code + '): ' + err.message);
+          }
+
+
+          /* Method that sends the bus current location to server */
+          function sendBusLocation(pos) {
+              var busLocation = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
+              socket.emit('buslocation', busLocation);
+          }
+    </script>
+    <p>Socket.html </p>
+</body>
+</html>

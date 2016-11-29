@@ -1,55 +1,46 @@
 'use strict';
 
-const express = require('express');
+var http = require('http');
+var url = require('url');
+var fs = require('fs');
+var io = require('socket.io');
 
-const socketIO = require('socket.io');
-const path = require('path');
+var server = http.createServer(function (request, response) {
+    var path = url.parse(request.url).pathname;
 
-const PORT = process.env.PORT || 3000;
-const INDEX = path.join(__dirname, 'index.html');
-
-const server = express()
-  .use((req, res) => res.sendFile(INDEX) )
-  .listen(PORT, () => console.log(`Listening on ${ PORT }`));
-
-const io = socketIO(server);
-
-//var app = express();
-
-////var app = express();
-////var http = require('http').Server(app);
-////var server = app.listen(process.env.PORT);
-////var io = require('socket.io').listen(server);
-
-//app.set('port', (process.env.PORT));
-
-////app.use(express.static(__dirname + '/public'));
-
-//app.use(express.static(__dirname + '/public'));
-
-//// views is directory for all template files
-//app.set('views', __dirname + '/views');
-//app.set('view engine', 'ejs');
-
-//app.get('/', function (request, response) {
-//    response.render('pages/index');
-//});
-
-//app.get('/transmitter', function (request, response) {
-//    response.render('pages/transmitter');
-//});
-
-//app.listen(app.get('port'), function () {
-//    console.log('Node app is running on port', app.get('port'));
-//});
-
-io.on('connection', (socket) => {
-  console.log('Client connected');
-  socket.on('disconnect', () => console.log('Client disconnected'));
-
-  socket.on('buslocation', function (busLocationData) {
-      io.emit('buslocation', busLocationData);
-  });
+    switch (path) {
+        case '/':
+            path = "/index.html";
+        case '/transmitter.html':
+            fs.readFile(__dirname + path, function (error, data) {
+                if (error) {
+                    response.writeHead(404);
+                    response.write('File not found!');
+                    response.end();
+                }
+                else {
+                    response.writeHead(200, { 'Content-Type': 'text/html' });
+                    response.write(data, "utf8");
+                    response.end();
+                }
+            });
+            break;
+        default:
+            response.writeHead(404);
+            response.write('File not found!');
+            response.end();
+            break;
+    }
 });
 
-setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
+server.listen(8001);
+
+var listener = io.listen(server);
+
+listener.sockets.on('connection', function (socket) {
+    socket.emit('message', { 'message': 'hello world' });
+
+    socket.on('buslocation', function (busLocation) {
+        socket.broadcast.emit('buslocationData', { 'lat': busLocation.lat, 'lng': busLocation.lng });
+    });
+});
