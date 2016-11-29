@@ -29,15 +29,19 @@
             top: 10%;
         }
     </style>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" />
+    <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDA5w4IA_fIDe8Iex8ybjYf8N7a2hMNkGA"></script>
 </head>
 <body>
-
     <div id="location-container">
         <div id="user-location-div">
             <label>User Location</label>
             <div id="">
-                <div id="startLat">18.5259343</div>
-                <div id="startLon">73.82759220000003</div>
+                <div id="startLat"></div>
+                <div id="startLon"></div>
             </div>
         </div>
         <div id="transmit-location-div">
@@ -45,11 +49,6 @@
         </div>
     </div>
     <div id="googleMap" style="width:1200px;height:600px;"></div>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" />
-    <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDA5w4IA_fIDe8Iex8ybjYf8N7a2hMNkGA"></script>
     <script>
         var socket = io.connect();
 
