@@ -61,8 +61,8 @@
               var busLocation = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
               socket.emit('buslocation', busLocation);
 
-              document.getElementById('startLat').innerHTML = busLocation.lat;
-              document.getElementById('startLon').innerHTML = busLocation.lng;
+              document.getElementById('startLat').innerHTML = busLocation.lat();
+              document.getElementById('startLon').innerHTML = busLocation.lng();
           }
     </script>
     <p>Socket.html </p>
