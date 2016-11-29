@@ -1,10 +1,47 @@
 <html>
+<head>
+    <style>
+        #location-container {
+            width: 100%;
+            height: 10%;
+            position: fixed;
+        }
+
+        #user-location-div {
+            float: left;
+            height: 10%;
+            position: relative;
+        }
+
+        #transmit-location-div {
+            top: 30%;
+            left: 25%;
+            float: right;
+            height: 10%;
+            position: absolute;
+        }
+
+        #googleMap {
+            width: 1200px;
+            height: 600px;
+            position: fixed;
+            overflow: hidden;
+            top: 10%;
+        }
+    </style>
+</head>
 <body>
-    <div>
-        <label>User Location</label>
+
+    <div id="location-container">
         <div id="user-location-div">
-            <div id="startLat"></div>
-            <div id="startLon"></div>
+            <label>User Location</label>
+            <div id="">
+                <div id="startLat">18.5259343</div>
+                <div id="startLon">73.82759220000003</div>
+            </div>
+        </div>
+        <div id="transmit-location-div">
+            <a href="/transmitter.html" target="_blank">Transmit Location</a>
         </div>
     </div>
     <div id="googleMap" style="width:1200px;height:600px;"></div>
