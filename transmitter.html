@@ -12,6 +12,14 @@
             height: 10%;
             position: relative;
         }
+
+        #googleMap {
+            width: 1200px;
+            height: 600px;
+            position: fixed;
+            overflow: hidden;
+            top: 10%;
+        }
     </style>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
@@ -29,6 +37,7 @@
             </div>
         </div>
     </div>
+    <div id="googleMap" style="width:1200px;height:600px;"></div>
     <script>
           var socket = io.connect();
 
@@ -63,6 +72,79 @@
 
               document.getElementById('startLat').innerHTML = busLocation.lat();
               document.getElementById('startLon').innerHTML = busLocation.lng();
+
+              updateUserLocation(busLocation);
+          }
+
+          /***** Page Variables *****/
+
+          /* Represents the Map object */
+          var map;
+
+          /* Object that represents Custom Bus Marker */
+          var busMarker;
+
+          var busLocation = new google.maps.LatLng(18.52592091234, 73.82753751221);
+
+          /***** Google Maps methods *****/
+
+          /* Method that initializes the Map Object */
+          function initialize() {
+              debugger;
+              /* Stores the map properties */
+              var mapProp = {
+                  center: new google.maps.LatLng(18.52592091234, 73.82753751221),
+                  zoom: 18,
+                  mapTypeId: google.maps.MapTypeId.ROADMAP
+              };
+
+              // Create a map object
+              map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
+
+              /* Add a custom marker on the map */
+              busMarker = new google.maps.Marker({
+                  position: busLocation,
+                  icon: "https://buslocatorapp.herokuapp.com/static/bus_18_2x.png",
+                  map: map
+              });
+
+              // Reference: https://developers.google.com/maps/documentation/javascript/examples/polyline-complex
+              // Create a new polyline which would display the route of the bus
+              busRoutePolyline = new google.maps.Polyline({
+                  strokeColor: '#000000',
+                  strokeOpacity: 1.0,
+                  strokeWeight: 3
+              });
+              busRoutePolyline.setMap(map);
+
+              ///* Monitor User Location */
+              //getUserLocation();
+          }
+
+          /* Event listener for Window Load event */
+          google.maps.event.addDomListener(window, 'load', initialize);
+
+          /* Method that updates the user's current location */
+          function updateUserLocation(busLocation) {
+              document.getElementById('startLat').innerHTML = busLocation.lat;
+              document.getElementById('startLon').innerHTML = busLocation.lng;
+
+              //// TODO: Update user location on map
+              //busLocation = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
+              busMarker.setPosition(busLocation);
+
+              var currCenter = map.getCenter();
+              google.maps.event.trigger(map, 'resize');
+              // Re-center map to the current bus location
+              map.setCenter(busLocation);
+
+              // Get the path of the bus from the polyline
+              var busPath = busRoutePolyline.getPath();
+
+              // Because path is an MVCArray, we can simply append a new coordinate
+              // and it will automatically appear.
+              // Append the current bus location to the bus path
+              busPath.push(busLocation);
           }
     </script>
 </body>
