@@ -57,7 +57,18 @@
         });
 
         socket.on('buslocationData', function (busLocation) {
-            updateUserLocation(busLocation);
+
+            var busLocations = [];
+
+            // Parse the busLocationData and put it into busLocations array
+            for (var device in busLocation.deviceLocationData) {
+                var deviceLocation = busLocation.deviceLocationData[device];
+                if (deviceLocation) {
+                    busLocations.push(deviceLocation);
+                }
+            }
+
+            updateBusLocations(busLocations);
         });
       //var el = document.getElementById('server-time');
 
@@ -69,9 +80,11 @@
 
       /* Represents the Map object */
       var map;
+      /* Represents the Area Bound for the Map object */
+      var bounds = new google.maps.LatLngBounds();
 
       /* Object that represents Custom Bus Marker */
-      var busMarker;
+      var busMarkers = [];
 
       var busLocation = new google.maps.LatLng(18.52592091234, 73.82753751221);
 
@@ -90,21 +103,21 @@
           // Create a map object
           map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
 
-          /* Add a custom marker on the map */
-          busMarker = new google.maps.Marker({
-              position: busLocation,
-              icon: "https://buslocatorapp.herokuapp.com/static/bus_18_2x.png",
-              map: map
-          });
+          ///* Add a custom marker on the map */
+          //busMarker = new google.maps.Marker({
+          //    position: busLocation,
+          //    icon: "https://buslocatorapp.herokuapp.com/static/bus_18_2x.png",
+          //    map: map
+          //});
 
-          // Reference: https://developers.google.com/maps/documentation/javascript/examples/polyline-complex
-          // Create a new polyline which would display the route of the bus
-          busRoutePolyline = new google.maps.Polyline({
-              strokeColor: '#000000',
-              strokeOpacity: 1.0,
-              strokeWeight: 3
-          });
-          busRoutePolyline.setMap(map);
+          //// Reference: https://developers.google.com/maps/documentation/javascript/examples/polyline-complex
+          //// Create a new polyline which would display the route of the bus
+          //busRoutePolyline = new google.maps.Polyline({
+          //    strokeColor: '#000000',
+          //    strokeOpacity: 1.0,
+          //    strokeWeight: 3
+          //});
+          //busRoutePolyline.setMap(map);
 
           ///* Monitor User Location */
           //getUserLocation();
@@ -136,29 +149,81 @@
       //    socket.emit('buslocation', busLocation);
       //}
 
+      /* Remove all bus markers from the Google Map */
+      function removeBusMarkers() {
+          for (i = 0; i < busMarkers.length; i++) {
+            /* Remove the marker from the Google Map */
+            busMarkers[i].setMap(null);
+          }
 
+          /* Empty the array */
+          busMarkers.length = 0;
+      }
 
-      /* Method that updates the user's current location */
-      function updateUserLocation(busLocation) {
-          document.getElementById('startLat').innerHTML = busLocation.lat;
-          document.getElementById('startLon').innerHTML = busLocation.lng;
+        /* Add bus markers on the Google Map based on busLocations */
+      function addBusMarkers(busLocations) {
 
-          //// TODO: Update user location on map
-          //busLocation = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
-          busMarker.setPosition(busLocation);
+          for (var location in busLocations) {
+              var busLocation = busLocations[location];
+              if (busLocation) {
 
-          var currCenter = map.getCenter();
+                  document.getElementById('startLat').innerHTML = busLocation.lat;
+                  document.getElementById('startLon').innerHTML = busLocation.lng;
+
+                  // Reference: https://wrightshq.com/playground/placing-multiple-markers-on-a-google-map-using-api-3/
+                  bounds.extend(busLocation);
+
+                  var busMarker = new google.maps.Marker({
+                      position: busLocation,
+                      //title: locations[i].title,
+                      icon: "https://buslocatorapp.herokuapp.com/static/bus_18_2x.png",
+                      map: map
+                  });
+
+                  // Push the newly created bus marker into the busMarkers array
+                  busMarkers.push(busMarker);
+
+                  // Automatically center the map fitting all markers on the screen
+                  map.fitBounds(bounds);
+              }
+          }
+      }
+
+      /* Method that updates all the bus current locations on the Google Map */
+      function updateBusLocations(busLocations) {
+
+          /* Remove all existing bus markers from the Google Map */
+          removeBusMarkers();
+
+          /* Add new bus markers based on updated locations on the Google Map */
+          addBusMarkers(busLocations);
+
+          ///* Object that represents Custom Bus Marker */
+          //var busMarker;
+
+          ///* Add a custom marker on the map */
+          //busMarker = new google.maps.Marker({
+          //    position: busLocation,
+          //    icon: "https://buslocatorapp.herokuapp.com/static/bus_18_2x.png",
+          //    map: map
+          //});
+
+          ////// TODO: Update user location on map
+          ////busLocation = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
+          //busMarker.setPosition(busLocation);
+
+          //var currCenter = map.getCenter();
           google.maps.event.trigger(map, 'resize');
           // Re-center map to the current bus location
-          map.setCenter(busLocation);
+          //map.setCenter(busLocation);
 
-          // Get the path of the bus from the polyline
-          var busPath = busRoutePolyline.getPath();
+          //// Get the path of the bus from the polyline
+          //var busPath = busRoutePolyline.getPath();
 
-          // Because path is an MVCArray, we can simply append a new coordinate
-          // and it will automatically appear.
-          // Append the current bus location to the bus path
-          busPath.push(busLocation);
+          //// Because path is an MVCArray, we can simply append a new coordinate
+          //// and it will automatically appear.
+          //// Append the current bus location to the bus path
+          //busPath.push(busLocation);
 
       }
     </script>

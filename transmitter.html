@@ -40,13 +40,21 @@
     <div id="googleMap" style="width:1200px;height:600px;"></div>
     <script>
           var socket = io.connect();
+          var deviceSessionId;
 
           socket.on('message', function (data) {
               console.log(data.message);
           });
 
-          /* Monitor User Location */
-          getUserLocation();
+          socket.on('deviceSessionData', function (data) {
+              console.log(data.deviceSessionId);
+
+              deviceSessionId = data.deviceSessionId;
+
+              initialize();
+              /* Monitor User Location */
+              getUserLocation();
+          });
 
           /* Method that returns location co-ordinates of the user */
           function getUserLocation() {
@@ -68,7 +76,9 @@
           /* Method that sends the bus current location to server */
           function sendBusLocation(pos) {
               var busLocation = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
-              socket.emit('buslocation', busLocation);
+              //socket.emit('buslocation', busLocation);
+              var busLocationData = { 'deviceSessionId': deviceSessionId, 'lat': busLocation.lat(), 'lng': busLocation.lng() };
+              socket.emit('buslocation', busLocationData);
 
               updateUserLocation(busLocation);
           }
@@ -119,7 +129,7 @@
           }
 
           /* Event listener for Window Load event */
-          google.maps.event.addDomListener(window, 'load', initialize);
+          //google.maps.event.addDomListener(window, 'load', initialize);
 
           /* Method that updates the user's current location */
           function updateUserLocation(busLocation) {

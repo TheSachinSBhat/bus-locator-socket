@@ -33,15 +33,56 @@ var server = http.createServer(function (request, response) {
     }
 });
 
+// Use this while debugging in node-debug
 //server.listen(8001);
+
+// Use this while deploying to heroku
 server.listen(process.env.PORT);
 
 var listener = io.listen(server);
 
+//global.testContext = 0;
+/* Array that holds the location data of all the devices currently connected */
+global.deviceLocationData = [];
+/* Array that holds the session data for all the connected clients */
+global.allClients = [];
+
+
 listener.sockets.on('connection', function (socket) {
-    socket.emit('message', { 'message': 'hello world' });
+    /* Push the current socket to the allClients array */
+    allClients.push(socket);
+    var deviceSessionId = allClients.indexOf(socket);
+
+    //global.testContext = global.testContext + 1;
+
+    socket.emit('message', { 'message': 'hello world'});
+
+    socket.emit('deviceSessionData', { 'deviceSessionId': deviceSessionId });
+
+    socket.on('disconnect', function () {
+        console.log('Got disconnect!');
+
+        var deviceSessionId = allClients.indexOf(socket);
+        /* Remove the session from the allClients array */
+        allClients.splice(deviceSessionId, 1);
+
+        /* Remove the location data from the deviceLocationData array */
+        deviceLocationData.splice(deviceSessionId, 1);
+
+        // TODO: Convert this into a method - broadcastBusLocationData(socket)
+        socket.broadcast.emit('buslocationData', {
+            'deviceLocationData': global.deviceLocationData
+        });
+    });
 
     socket.on('buslocation', function (busLocation) {
-        socket.broadcast.emit('buslocationData', { 'lat': busLocation.lat, 'lng': busLocation.lng });
+
+        global.deviceLocationData[busLocation.deviceSessionId] = { 'deviceSessionId': busLocation.deviceSessionId, 'lat': busLocation.lat, 'lng': busLocation.lng };
+
+        // TODO: Convert this into a method - broadcastBusLocationData(socket)
+        socket.broadcast.emit('buslocationData', {
+            //'deviceSessionId': busLocation.deviceSessionId, 'lat': busLocation.lat, 'lng': busLocation.lng,
+            'deviceLocationData': global.deviceLocationData
+        });
     });
 });
